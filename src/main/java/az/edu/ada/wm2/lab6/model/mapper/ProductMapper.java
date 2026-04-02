@@ -4,37 +4,30 @@ import az.edu.ada.wm2.lab6.model.Category;
 import az.edu.ada.wm2.lab6.model.Product;
 import az.edu.ada.wm2.lab6.model.dto.ProductRequestDto;
 import az.edu.ada.wm2.lab6.model.dto.ProductResponseDto;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Component
-public class ProductMapper {
+@Mapper(componentModel = "spring")
+public interface ProductMapper {
 
-    public Product toEntity(ProductRequestDto dto) {
-        Product product = new Product();
-        if (dto.getProductName() != null) {
-            product.setProductName(dto.getProductName());
-        }
-        if (dto.getPrice() != null) {
-            product.setPrice(dto.getPrice());
-        }
-        if (dto.getExpirationDate() != null) {
-            product.setExpirationDate(dto.getExpirationDate());
-        }
-        return product;
-    }
+  // Entity → Response DTO
+  @Mapping(target = "categoryNames", source = "categories")
+  ProductResponseDto toResponseDto(Product product);
 
-    public ProductResponseDto toResponseDto(Product product) {
-        List<String> names = product.getCategories().stream()
-                .map(Category::getName)
-                .toList();
-        return ProductResponseDto.builder()
-                .id(product.getId())
-                .productName(product.getProductName())
-                .price(product.getPrice())
-                .expirationDate(product.getExpirationDate())
-                .categoryNames(names)
-                .build();
+  // Request DTO → Entity (without categories!)
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "categories", ignore = true)
+  Product toEntity(ProductRequestDto dto);
+
+  // Custom mapping: List<Category> → List<String>
+  default List<String> mapCategoriesToNames(List<Category> categories) {
+    if (categories == null) {
+        return List.of();
     }
+    return categories.stream()
+        .map(Category::getName)
+        .toList();
+  }
 }
