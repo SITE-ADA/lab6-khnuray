@@ -3,10 +3,11 @@ package az.edu.ada.wm2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "az.edu.ada.wm2")
+@SpringBootApplication
 public class Lab6Application {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Lab6Application.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(Lab6Application.class, args);
+	}
+
 }
